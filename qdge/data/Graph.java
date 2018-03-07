@@ -64,6 +64,17 @@ public class Graph {
         fireDrawingChanged();
     }
     
+    public void addNewEdgeIfDoesNotExist(Vertex v, Vertex w){
+        if(edges.parallelStream()
+                .anyMatch(e -> 
+                        (e.getV().equals(v) && e.getW().equals(w)) ||
+                                (e.getV().equals(w) && e.getW().equals(v)))){
+            return;
+        }
+        edges.add(new Edge(v, w));
+        fireDrawingChanged();
+    }
+    
     public Stream<Vertex> vertices(){
         return vertices.stream();
     }
