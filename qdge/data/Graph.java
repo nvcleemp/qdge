@@ -83,6 +83,10 @@ public class Graph {
         return edges.stream();
     }
     
+    public int getOrder(){
+        return vertices.size();
+    }
+    
     public void clear(){
         vertices().forEach(v -> {v.removeListener(vListener);});
         vertices.clear();
