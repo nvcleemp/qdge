@@ -75,6 +75,17 @@ public class Graph {
         fireDrawingChanged();
     }
     
+    public boolean areAdjacent(int v, int w){
+        return areAdjacent(vertices.get(v), vertices.get(w));
+    }
+    
+    public boolean areAdjacent(Vertex v, Vertex w){
+        return edges.parallelStream()
+                .anyMatch(e -> 
+                        (e.getV().equals(v) && e.getW().equals(w)) ||
+                                (e.getV().equals(w) && e.getW().equals(v)));
+    }
+    
     public Stream<Vertex> vertices(){
         return vertices.stream();
     }
