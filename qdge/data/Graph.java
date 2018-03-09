@@ -29,11 +29,15 @@ public class Graph {
     
     private final List<GraphListener> listeners = new ArrayList<>();
     
+    private final List<GraphInfoListener> infoListeners = new ArrayList<>();
+    
     private final List<Vertex> vertices = new ArrayList<>();
     
     private final List<Edge> edges = new ArrayList<>();
     
     private final VertexListener vListener = this::fireDrawingChanged;
+    
+    private boolean structureEditable = true;
     
     public void addListener(GraphListener listener){
         listeners.add(listener);
@@ -45,6 +49,18 @@ public class Graph {
     
     private void fireDrawingChanged(){
         listeners.parallelStream().forEach(l->l.graphChanged());
+    }
+    
+    public void addInfoListener(GraphInfoListener listener){
+        infoListeners.add(listener);
+    }
+    
+    public void removeInfoListener(GraphInfoListener listener){
+        infoListeners.remove(listener);
+    }
+    
+    private void fireInfoChanged(){
+        infoListeners.parallelStream().forEach(l->l.graphInfoChanged());
     }
     
     public Vertex addNewVertex(float x, float y){
@@ -103,5 +119,17 @@ public class Graph {
         vertices.clear();
         edges.clear();
         fireDrawingChanged();
+        setStructureEditable(true);
     }
+
+    public boolean isStructureEditable() {
+        return structureEditable;
+    }
+
+    public void setStructureEditable(boolean structureEditable) {
+        this.structureEditable = structureEditable;
+        fireInfoChanged();
+    }
+    
+    
 }
