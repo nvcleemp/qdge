@@ -57,9 +57,10 @@ public class WriteGraph2DHandler implements FileGraphReader, FileGraphWriter, St
     
     @Override
     public void writeToFile(File file, Graph graph) throws IOException {
-        FileWriter writer = new FileWriter(file);
-        writer.write(">>writegraph2d<<\n");
-        writer.write(writeToString(graph));
+        try (FileWriter writer = new FileWriter(file)) {
+            writer.write(">>writegraph2d<<\n");
+            writer.write(writeToString(graph));
+        }
     }
     
     @Override
