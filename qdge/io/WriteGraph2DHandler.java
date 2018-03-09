@@ -37,6 +37,7 @@ public class WriteGraph2DHandler implements FileGraphReader, FileGraphWriter, St
     
     @Override
     public void readFromFile(File f, Graph graph) throws IOException{
+        graph.clear();
         try(BufferedReader br = new BufferedReader(new FileReader(f))) {
             String s = br.readLine(); //skip first line: header
             s = br.readLine();
