@@ -80,6 +80,7 @@ public class Graph6Handler implements StringGraphReader, StringGraphWriter {
                 }
             }
         }
+        graph.setStructureEditable(false);
     }
 
     /**

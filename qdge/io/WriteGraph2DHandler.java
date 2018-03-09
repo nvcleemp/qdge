@@ -52,6 +52,7 @@ public class WriteGraph2DHandler implements FileGraphReader, FileGraphWriter, St
                 s = br.readLine();
             }
         }
+        graph.setStructureEditable(false);
     }
     
     @Override
