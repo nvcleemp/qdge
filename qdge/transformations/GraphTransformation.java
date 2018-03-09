@@ -18,20 +18,13 @@
 package qdge.transformations;
 
 import qdge.data.Graph;
-import qdge.data.Vertex;
 
 /**
- * Abstract superclass for transformations which apply the same operation to
- * each vertex.
- * 
+ *
  * @author nvcleemp
  */
-public abstract class AbstractUniversalGraphTransformation implements GraphTransformation {
+public interface GraphTransformation {
+
+    void transformGraph(Graph g);
     
-    @Override
-    public void transformGraph(Graph g){
-        g.vertices().forEach(this::transformVertex);
-    }
-    
-    public abstract void transformVertex(Vertex v);
 }
