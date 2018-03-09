@@ -36,17 +36,17 @@ import qdge.data.Vertex;
 public class WriteGraph2DHandler implements FileGraphReader, FileGraphWriter, StringGraphWriter {
     
     @Override
-    public void readFromFile(File f, Graph model) throws IOException{
+    public void readFromFile(File f, Graph graph) throws IOException{
         try(BufferedReader br = new BufferedReader(new FileReader(f))) {
             String s = br.readLine(); //skip first line: header
             s = br.readLine();
             while(s!=null && !s.trim().equals("0")){
                 String[] parts = s.trim().split("\\s+");
                 int v = Integer.parseInt(parts[0]);
-                model.addNewVertex(Float.parseFloat(parts[1])*100, Float.parseFloat(parts[2])*100);
+                graph.addNewVertex(Float.parseFloat(parts[1])*100, Float.parseFloat(parts[2])*100);
                 for (int i = 3; i < parts.length; i++) {
                     int n = Integer.parseInt(parts[i]);
-                    if(v>n) model.addNewEdge(v-1, n-1);
+                    if(v>n) graph.addNewEdge(v-1, n-1);
                 }
                 s = br.readLine();
             }
