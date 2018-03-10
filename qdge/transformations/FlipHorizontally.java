@@ -27,7 +27,7 @@ public class FlipHorizontally extends AbstractUniversalGraphTransformation {
 
     @Override
     public void transformVertex(Vertex v) {
-        v.setXY(v.getX(), -v.getY());
+        v.setXY(-v.getX(), v.getY());
     }
 
 }
