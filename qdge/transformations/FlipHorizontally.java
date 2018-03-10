@@ -23,11 +23,11 @@ import qdge.data.Vertex;
  * Reflects the graph across the Y-axis.
  * @author nvcleemp
  */
-public class VerticalMirror extends AbstractUniversalGraphTransformation {
+public class FlipHorizontally extends AbstractUniversalGraphTransformation {
 
     @Override
     public void transformVertex(Vertex v) {
         v.setXY(v.getX(), -v.getY());
     }
-    
+
 }

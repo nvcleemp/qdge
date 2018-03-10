@@ -23,7 +23,7 @@ import qdge.data.Vertex;
  * Reflects the graph across the X-axis.
  * @author nvcleemp
  */
-public class HorizontalMirror extends AbstractUniversalGraphTransformation {
+public class FlipVertically extends AbstractUniversalGraphTransformation {
 
     @Override
     public void transformVertex(Vertex v) {
