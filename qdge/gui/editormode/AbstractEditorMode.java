@@ -19,6 +19,7 @@ package qdge.gui.editormode;
 
 import java.util.stream.Collectors;
 
+import qdge.data.Edge;
 import qdge.data.Graph;
 import qdge.data.Vertex;
 import qdge.gui.GraphPanel;
@@ -78,6 +79,40 @@ abstract class AbstractEditorMode implements EditorMode {
             }
         }
         return nearest;
+    }
+
+    boolean isNearEdge(Edge e, float x, float y){
+        if(e==null){
+            return false;
+        }
+        return getDistance2(e, x, y) < CLOSENESS_TOLERANCE;
+    }
+    
+    Edge findNearestEdge(float x, float y) {
+        float minDist = CLOSENESS_TOLERANCE;
+        Edge nearest = null;
+        for (Edge e : graph.edges().collect(Collectors.toList())) {
+            float d = getDistance2(e, x, y);
+            if (d < minDist) {
+                minDist = d;
+                nearest = e;
+            }
+        }
+        return nearest;
+    }
+    
+    static float getDistance2(Edge e, float x, float y){
+        final float x1 = e.getV().getX();
+        final float y1 = e.getV().getY();
+        final float x2 = e.getW().getX();
+        final float y2 = e.getW().getY();
+        float edgeLength = getDistance2(x1, y1, x2, y2);
+        if (edgeLength == 0) {
+            return getDistance2(x1, y1, x, y);
+        }
+        float t = ((x - x1)*(x2 - x1) + (y - y1)*(y2 - y1))/edgeLength;
+        t = Math.max(0, Math.min(1, t));
+        return getDistance2(x, y, x1 + t*(x2 - x1), y1 + t*(y2 - y1));
     }
 
     static float getDistance2(float x1, float y1, float x2, float y2) {
