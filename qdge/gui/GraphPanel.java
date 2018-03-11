@@ -44,7 +44,7 @@ public class GraphPanel extends JPanel{
     
     private Graph graph;
     
-    private Vertex focus = null;
+    private Vertex focusVertex = null;
     
     private Vertex halfEdgeStart = null;
     
@@ -94,7 +94,7 @@ public class GraphPanel extends JPanel{
                 e -> paintEdge(g2, getX(e.getV()), getY(e.getV()), getX(e.getW()), getY(e.getW()))
         );
         graph.vertices().forEach(
-                v -> paintVertex(g2, getX(v), getY(v), v.equals(focus) ? Color.ORANGE : Color.WHITE)
+                v -> paintVertex(g2, getX(v), getY(v), v.equals(focusVertex) ? Color.ORANGE : Color.WHITE)
         );
     }
 
@@ -169,11 +169,15 @@ public class GraphPanel extends JPanel{
         repaint();
     }
 
-    public void setFocus(Vertex focus) {
-        if(this.focus != focus){
-            this.focus = focus;
+    public void setFocusVertex(Vertex focusVertex) {
+        if(this.focusVertex != focusVertex){
+            this.focusVertex = focusVertex;
             repaint();
         }
+    }
+
+    public Vertex getFocusVertex() {
+        return focusVertex;
     }
     
     private final List<ChangeListener> listeners = new ArrayList<>();

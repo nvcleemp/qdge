@@ -18,6 +18,7 @@
 package qdge.gui.editormode;
 
 import java.util.stream.Collectors;
+
 import qdge.data.Graph;
 import qdge.data.Vertex;
 import qdge.gui.GraphPanel;
@@ -40,7 +41,9 @@ abstract class AbstractEditorMode implements EditorMode {
 
     @Override
     public void moved(float x, float y) {
-        panel.setFocus(findNearestVertex(x, y));
+        if(!isNearVertex(panel.getFocusVertex(), x, y)){
+            panel.setFocusVertex(findNearestVertex(x, y));
+        }
     }
 
     @Override
@@ -55,8 +58,17 @@ abstract class AbstractEditorMode implements EditorMode {
     @Override
     public void dragEnded(float x, float y) {}
 
+    private static final float CLOSENESS_TOLERANCE = GraphPanel.VERTEX_RADIUS * GraphPanel.VERTEX_RADIUS;
+    
+    boolean isNearVertex(Vertex v, float x, float y){
+        if(v==null){
+            return false;
+        }
+        return getDistance2(x, y, v.getX(), v.getY()) < CLOSENESS_TOLERANCE;
+    }
+    
     Vertex findNearestVertex(float x, float y) {
-        float minDist = GraphPanel.VERTEX_RADIUS * GraphPanel.VERTEX_RADIUS;
+        float minDist = CLOSENESS_TOLERANCE;
         Vertex nearest = null;
         for (Vertex v : graph.vertices().collect(Collectors.toList())) {
             float d = getDistance2(x, y, v.getX(), v.getY());
