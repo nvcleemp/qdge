@@ -73,8 +73,8 @@ public class GraphPanelMouseListener extends MouseInputAdapter {
     public void mouseDragged(MouseEvent e) {
         final float x = getCoordinate(e.getX() - panel.getWidth()/2);
         final float y = getCoordinate(e.getY() - panel.getHeight()/2);
-        editorMode.moved(x, y);
         editorMode.dragged(x, y);
+        editorMode.moved(x, y);
     }
     
     private float getCoordinate(float coord){
