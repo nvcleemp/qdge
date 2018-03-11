@@ -17,16 +17,20 @@
 
 package qdge.gui;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.awt.Stroke;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import qdge.data.Edge;
 import qdge.data.GraphListener;
 import qdge.data.Graph;
 import qdge.data.Vertex;
@@ -45,6 +49,8 @@ public class GraphPanel extends JPanel{
     private Graph graph;
     
     private Vertex focusVertex = null;
+    
+    private Edge focusEdge = null;
     
     private Vertex halfEdgeStart = null;
     
@@ -88,10 +94,10 @@ public class GraphPanel extends JPanel{
         }
         ((Graphics2D)g2).scale(5.0/zoom, 5.0/zoom);
         if(halfEdgeStart!=null){
-            paintEdge(g2, getX(halfEdgeStart), getY(halfEdgeStart), Math.round(halfEdgeX), Math.round(halfEdgeY));
+            paintEdge(g2, getX(halfEdgeStart), getY(halfEdgeStart), Math.round(halfEdgeX), Math.round(halfEdgeY), 1);
         }
         graph.edges().forEach(
-                e -> paintEdge(g2, getX(e.getV()), getY(e.getV()), getX(e.getW()), getY(e.getW()))
+                e -> paintEdge(g2, getX(e.getV()), getY(e.getV()), getX(e.getW()), getY(e.getW()), e.equals(focusEdge) ? 3 : 1)
         );
         graph.vertices().forEach(
                 v -> paintVertex(g2, getX(v), getY(v), v.equals(focusVertex) ? Color.ORANGE : Color.WHITE)
@@ -117,8 +123,10 @@ public class GraphPanel extends JPanel{
         g2.drawOval(x-VERTEX_RADIUS, y-VERTEX_RADIUS, 2*VERTEX_RADIUS, 2*VERTEX_RADIUS);
     }
     
-    private void paintEdge(Graphics g, int x1, int y1, int x2, int y2){
-        g.drawLine(x1, y1, x2, y2);
+    private void paintEdge(Graphics g, int x1, int y1, int x2, int y2, float width){
+        Graphics2D g2 = (Graphics2D)g.create();
+        g2.setStroke(new BasicStroke(width));
+        g2.drawLine(x1, y1, x2, y2);
     }
 
     @Override
@@ -172,12 +180,26 @@ public class GraphPanel extends JPanel{
     public void setFocusVertex(Vertex focusVertex) {
         if(this.focusVertex != focusVertex){
             this.focusVertex = focusVertex;
+            if(focusVertex!=null){
+                this.focusEdge = null;
+            }
             repaint();
         }
     }
 
     public Vertex getFocusVertex() {
         return focusVertex;
+    }
+    
+    public void setFocusEdge(Edge focusEdge) {
+        if(this.focusEdge != focusEdge){
+            this.focusEdge = focusEdge;
+            repaint();
+        }
+    }
+
+    public Edge getFocusEdge() {
+        return focusEdge;
     }
     
     private final List<ChangeListener> listeners = new ArrayList<>();

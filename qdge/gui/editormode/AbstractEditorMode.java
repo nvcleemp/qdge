@@ -45,6 +45,11 @@ abstract class AbstractEditorMode implements EditorMode {
         if(!isNearVertex(panel.getFocusVertex(), x, y)){
             panel.setFocusVertex(findNearestVertex(x, y));
         }
+        if(panel.getFocusVertex()==null){
+            if(!isNearEdge(panel.getFocusEdge(), x, y)){
+                panel.setFocusEdge(findNearestEdge(x, y));
+            }
+        }
     }
 
     @Override
