@@ -25,6 +25,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.KeyStroke;
 
 import qdge.data.Graph;
@@ -114,6 +115,24 @@ public class QDGraphEditor {
         mLoad.add(mLoadString);
         mFile.add(mLoad);
         
+        JMenu mEdit = new JMenu("Edit");
+        final JMenu mMode = new JMenu("Editor mode");
+        final EditorMode[] editorModes = {layoutMode, createMode};
+        final String[] modeNames = {"Layout mode", "Create mode"};
+        for (int i = 0; i < editorModes.length; i++) {
+            final EditorMode m = editorModes[i];
+            final JRadioButtonMenuItem item = new JRadioButtonMenuItem(
+                    modeNames[i], editorModeModel.isSelected(m));
+            item.addChangeListener(e -> {
+                if(item.isSelected())
+                    editorModeModel.select(m);
+            });
+            item.setAccelerator(KeyStroke.getKeyStroke((char)('1' + i), InputEvent.CTRL_DOWN_MASK));
+            editorModeModel.addListener((o,n) -> item.setSelected(m.equals(n)));
+            mMode.add(item);
+        }
+        mEdit.add(mMode);
+        
         JMenu mCenter = new JMenu("Center");
         mCenter.add(new TransformationAction("Center bounding box", new CenterBoundingBox(), graph)).setAccelerator(KeyStroke.getKeyStroke('B'));
         mCenter.add(new TransformationAction("Center gravitational center", new CenterGravitationalCenter(), graph)).setAccelerator(KeyStroke.getKeyStroke('G'));
@@ -149,6 +168,7 @@ public class QDGraphEditor {
         
         JMenuBar mb = new JMenuBar();
         mb.add(mFile);
+        mb.add(mEdit);
         mb.add(mTransform);
         mb.add(mView);
         
