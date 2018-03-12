@@ -49,6 +49,7 @@ import qdge.transformations.Rotation;
 import qdge.transformations.Scale;
 import qdge.transformations.Shift;
 import qdge.transformations.FlipHorizontally;
+import qdge.util.SimpleSingleSelectionModel;
 
 /**
  * A quick & dirty graph editor.
@@ -65,17 +66,21 @@ public class QDGraphEditor {
         frame.setLayout(new BorderLayout());
         
         final Graph graph = new Graph();
-        GraphPanel panel = new GraphPanel(graph);
+        final GraphPanel panel = new GraphPanel(graph);
+        final SimpleSingleSelectionModel<EditorMode> editorModeModel =
+                new SimpleSingleSelectionModel<>();
         final EditorMode createMode = EditorMode.createMode(graph, panel);
         final EditorMode layoutMode = EditorMode.layoutMode(graph, panel);
         final GraphPanelMouseListener l = new GraphPanelMouseListener(createMode, panel);
+        editorModeModel.select(createMode);
         graph.addInfoListener(() -> {
             if(graph.isStructureEditable()){
-                l.setEditorMode(createMode);
+                editorModeModel.select(createMode);
             } else {
-                l.setEditorMode(layoutMode);
+                editorModeModel.select(layoutMode);
             }
         });
+        editorModeModel.addListener((o, n) -> l.setEditorMode(n));
         panel.addMouseListener(l);
         panel.addMouseMotionListener(l);
 
