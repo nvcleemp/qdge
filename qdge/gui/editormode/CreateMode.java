@@ -19,12 +19,17 @@ package qdge.gui.editormode;
 
 import java.util.EnumMap;
 import java.util.Map;
+
 import qdge.data.Graph;
 import qdge.data.Vertex;
 import qdge.gui.GraphPanel;
 
 /**
- * Editor mode which edits the underlying graph.
+ * Editor mode which allows vertices and edges to be added to the graph.
+ * Vertices can be added by double-clicking. Edges can be added by dragging
+ * while holding the SHIFT key down. If an edge is started from a vertex,
+ * but does not end in a vertex, then a new vertex is automatically created
+ * at the end of the new edge.
  * 
  * @author nvcleemp
  */
