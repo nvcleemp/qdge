@@ -32,6 +32,7 @@ import qdge.data.Graph;
 import qdge.gui.GraphPanel;
 import qdge.gui.GraphPanelMouseListener;
 import qdge.gui.actions.ExportStringAction;
+import qdge.gui.actions.InfoAction;
 import qdge.gui.actions.LoadFileAction;
 import qdge.gui.actions.LoadStringAction;
 import qdge.gui.actions.SaveFileAction;
@@ -132,6 +133,8 @@ public class QDGraphEditor {
             editorModeModel.addListener((o,n) -> item.setSelected(m.equals(n)));
             mMode.add(item);
         }
+        mMode.addSeparator();
+        mMode.add(new InfoAction(QDGraphEditorHelp.EDITOR_MODES));
         mEdit.add(mMode);
         
         JMenu mCenter = new JMenu("Center");
