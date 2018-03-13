@@ -38,4 +38,8 @@ public interface EditorMode {
     public static EditorMode createMode(Graph g, GraphPanel panel){
         return new CreateMode(g, panel);
     }
+    
+    public static EditorMode editMode(Graph g, GraphPanel panel){
+        return new EditMode(g, panel);
+    }
 }
