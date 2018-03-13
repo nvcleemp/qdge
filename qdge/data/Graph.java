@@ -19,6 +19,7 @@ package qdge.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -71,12 +72,38 @@ public class Graph {
         return v;
     }
     
+    public Vertex addVertex(Vertex v){
+        vertices.add(v);
+        v.addListener(vListener);
+        fireDrawingChanged();
+        return v;
+    }
+    
+    public void removeVertex(Vertex v){
+        v.removeListener(vListener);
+        for (Edge e : incidentEdges(v)) {
+            edges.remove(e);
+        }
+        vertices.remove(v);
+        fireDrawingChanged();
+    }
+    
     public void addNewEdge(int v, int w){
         addNewEdge(vertices.get(v), vertices.get(w));
     }
     
     public void addNewEdge(Vertex v, Vertex w){
         edges.add(new Edge(v, w));
+        fireDrawingChanged();
+    }
+    
+    public void addEdge(Edge e){
+        edges.add(e);
+        fireDrawingChanged();
+    }
+    
+    public void removeEdge(Edge e){
+        edges.remove(e);
         fireDrawingChanged();
     }
     
@@ -100,6 +127,12 @@ public class Graph {
                 .anyMatch(e -> 
                         (e.getV().equals(v) && e.getW().equals(w)) ||
                                 (e.getV().equals(w) && e.getW().equals(v)));
+    }
+    
+    public List<Edge> incidentEdges(Vertex v){
+        return edges.parallelStream()
+                .filter(e -> e.getV().equals(v) || e.getW().equals(v))
+                .collect(Collectors.toList());
     }
     
     public Stream<Vertex> vertices(){
