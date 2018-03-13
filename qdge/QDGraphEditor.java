@@ -72,6 +72,7 @@ public class QDGraphEditor {
                 new SimpleSingleSelectionModel<>();
         final EditorMode createMode = EditorMode.createMode(graph, panel);
         final EditorMode layoutMode = EditorMode.layoutMode(graph, panel);
+        final EditorMode editMode = EditorMode.editMode(graph, panel);
         final GraphPanelMouseListener l = new GraphPanelMouseListener(createMode, panel);
         editorModeModel.select(createMode);
         graph.addInfoListener(() -> {
@@ -117,8 +118,8 @@ public class QDGraphEditor {
         
         JMenu mEdit = new JMenu("Edit");
         final JMenu mMode = new JMenu("Editor mode");
-        final EditorMode[] editorModes = {layoutMode, createMode};
-        final String[] modeNames = {"Layout mode", "Create mode"};
+        final EditorMode[] editorModes = {layoutMode, createMode, editMode};
+        final String[] modeNames = {"Layout mode", "Create mode", "Edit mode"};
         for (int i = 0; i < editorModes.length; i++) {
             final EditorMode m = editorModes[i];
             final JRadioButtonMenuItem item = new JRadioButtonMenuItem(
