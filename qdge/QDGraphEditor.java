@@ -25,6 +25,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.KeyStroke;
 
@@ -140,6 +141,29 @@ public class QDGraphEditor {
         mMode.addSeparator();
         mMode.add(new InfoAction(QDGraphEditorHelp.EDITOR_MODES));
         mEdit.add(mMode);
+        mEdit.addSeparator();
+        final JMenuItem undoItem = new JMenuItem(new AbstractAction("Undo") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                history.undo();
+            }
+        });
+        undoItem.setEnabled(false);
+        final JMenuItem redoItem = new JMenuItem(new AbstractAction("Redo") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                history.redo();
+            }
+        });
+        redoItem.setEnabled(false);
+        history.addListener((u,r) -> {
+            undoItem.setEnabled(u!=null);
+            undoItem.setText(u==null ? "Undo" : "Undo: " + u.getDescription());
+            redoItem.setEnabled(r!=null);
+            redoItem.setText(r==null ? "Redo" : "Redo: " + r.getDescription());
+        });
+        mEdit.add(undoItem).setAccelerator(KeyStroke.getKeyStroke('Z', InputEvent.CTRL_DOWN_MASK));
+        mEdit.add(redoItem).setAccelerator(KeyStroke.getKeyStroke('Y', InputEvent.CTRL_DOWN_MASK));
         
         JMenu mCenter = new JMenu("Center");
         mCenter.add(new TransformationAction("Center bounding box", new CenterBoundingBox(), graph, history)).setAccelerator(KeyStroke.getKeyStroke('B'));
