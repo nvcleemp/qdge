@@ -88,13 +88,15 @@ public class Graph {
         fireDrawingChanged();
     }
     
-    public void addNewEdge(int v, int w){
-        addNewEdge(vertices.get(v), vertices.get(w));
+    public Edge addNewEdge(int v, int w){
+        return addNewEdge(vertices.get(v), vertices.get(w));
     }
     
-    public void addNewEdge(Vertex v, Vertex w){
-        edges.add(new Edge(v, w));
+    public Edge addNewEdge(Vertex v, Vertex w){
+        final Edge e = new Edge(v, w);
+        edges.add(e);
         fireDrawingChanged();
+        return e;
     }
     
     public void addEdge(Edge e){
