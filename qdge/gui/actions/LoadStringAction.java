@@ -22,6 +22,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 import qdge.data.Graph;
+import qdge.gui.undo.HistoryModel;
 import qdge.io.StringGraphReader;
 
 /**
@@ -34,16 +35,20 @@ public class LoadStringAction extends AbstractAction {
     
     private final StringGraphReader reader;
     
-    public LoadStringAction(Graph graph, StringGraphReader reader) {
+    private final HistoryModel history;
+    
+    public LoadStringAction(Graph graph, StringGraphReader reader, HistoryModel history) {
         super("Load " + reader.getFormatName() + " from text...");
         this.reader = reader;
         this.graph = graph;
+        this.history = history;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         String s = JOptionPane.showInputDialog(null, "Give the graph", "Graph", JOptionPane.PLAIN_MESSAGE);
         if(s!=null){
+            history.clear();
             reader.readFromString(s, graph);
         }
     }

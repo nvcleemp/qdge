@@ -98,6 +98,7 @@ public class QDGraphEditor {
             @Override
             public void actionPerformed(ActionEvent e) {
                 graph.clear();
+                history.clear();
             }
         });
         JMenu mSave = new JMenu("Save");
@@ -113,10 +114,10 @@ public class QDGraphEditor {
         mFile.add(mExport);
         JMenu mLoad = new JMenu("Load");
         JMenu mLoadFile = new JMenu("Load from file");
-        mLoadFile.add(new LoadFileAction(graph, new WriteGraph2DHandler()));
+        mLoadFile.add(new LoadFileAction(graph, new WriteGraph2DHandler(), history));
         mLoad.add(mLoadFile);
         JMenu mLoadString = new JMenu("Load from string");
-        mLoadString.add(new LoadStringAction(graph, new Graph6Handler()));
+        mLoadString.add(new LoadStringAction(graph, new Graph6Handler(), history));
         mLoad.add(mLoadString);
         mFile.add(mLoad);
         

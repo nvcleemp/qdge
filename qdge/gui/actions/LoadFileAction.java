@@ -27,6 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
+import qdge.gui.undo.HistoryModel;
 
 /**
  * Action which reads a graph in a specific format from a file.
@@ -39,18 +40,22 @@ public class LoadFileAction extends AbstractAction {
     
     private final FileGraphReader reader;
     
+    private final HistoryModel history;
+    
     private final JFileChooser fileChooser = new JFileChooser();
     
-    public LoadFileAction(Graph graph, FileGraphReader reader) {
+    public LoadFileAction(Graph graph, FileGraphReader reader, HistoryModel history) {
         super("Load " + reader.getFormatName() + " from file...");
         this.reader = reader;
         this.graph = graph;
+        this.history = history;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if(fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
             graph.clear();
+            history.clear();
             File file = fileChooser.getSelectedFile();
             try {
                 reader.readFromFile(file, graph);
