@@ -59,6 +59,12 @@ public class HistoryModel {
         fireHistoryChanged();
     }
     
+    public void clear(){
+        history.clear();
+        future.clear();
+        fireHistoryChanged();
+    }
+    
     private void fireHistoryChanged(){
         final HistoryItem topHistory = history.isEmpty() ? null : history.peek();
         final HistoryItem topFuture = future.isEmpty() ? null : future.peek();
