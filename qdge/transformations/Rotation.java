@@ -17,6 +17,7 @@
 
 package qdge.transformations;
 
+import qdge.data.Graph;
 import qdge.data.Vertex;
 
 /**
@@ -48,6 +49,11 @@ public class Rotation extends AbstractUniversalGraphTransformation {
                 (int)(Math.round(Math.cos(Math.PI*angle/180)*v.getX() + Math.sin(Math.PI*angle/180)*v.getY())),
                 (int)(Math.round(-Math.sin(Math.PI*angle/180)*v.getX() + Math.cos(Math.PI*angle/180)*v.getY()))
         );
+    }
+
+    @Override
+    public GraphTransformation inverseTransformation(Graph g) {
+        return new Rotation(-angle);
     }
     
 }

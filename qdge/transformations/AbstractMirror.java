@@ -18,30 +18,16 @@
 package qdge.transformations;
 
 import qdge.data.Graph;
-import qdge.data.Vertex;
 
 /**
- * Shifts the graph a specified amount.
+ * Superclass for all mirror transformations.
  * @author nvcleemp
  */
-public class Shift extends AbstractUniversalGraphTransformation {
-    
-    private final float x;
-    private final float y;
-
-    public Shift(float x, float y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    @Override
-    public void transformVertex(Vertex v) {
-        v.setXY(v.getX() + x, v.getY() + y);
-    }
+public abstract class AbstractMirror extends AbstractUniversalGraphTransformation {
 
     @Override
     public GraphTransformation inverseTransformation(Graph g) {
-        return new Shift(-x, -y);
+        return this;
     }
     
 }

@@ -42,4 +42,10 @@ public class CenterGravitationalCenter extends AbstractUniversalGraphTransformat
         v.setXY(v.getX() + x, v.getY() + y);
     }
     
+    @Override
+    public GraphTransformation inverseTransformation(Graph g) {
+        return new Shift(
+                (float)g.vertices().mapToDouble(v -> v.getX()).average().getAsDouble(),
+                (float)g.vertices().mapToDouble(v -> v.getY()).average().getAsDouble());
+    }
 }

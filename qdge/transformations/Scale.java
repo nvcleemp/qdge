@@ -17,6 +17,7 @@
 
 package qdge.transformations;
 
+import qdge.data.Graph;
 import qdge.data.Vertex;
 
 /**
@@ -39,6 +40,11 @@ public class Scale extends AbstractUniversalGraphTransformation {
     @Override
     public void transformVertex(Vertex v) {
         v.setXY(v.getX()*scale, v.getY()*scale);
+    }
+
+    @Override
+    public GraphTransformation inverseTransformation(Graph g) {
+        return new Scale(1/scale);
     }
     
 }

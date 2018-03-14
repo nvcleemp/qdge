@@ -45,5 +45,13 @@ public class CenterBoundingBox extends AbstractUniversalGraphTransformation {
     public void transformVertex(Vertex v) {
         v.setXY(v.getX() + x, v.getY() + y);
     }
-    
+
+    @Override
+    public GraphTransformation inverseTransformation(Graph g) {
+        float maxX = (float)g.vertices().mapToDouble(v -> v.getX()).max().getAsDouble();
+        float minX = (float)g.vertices().mapToDouble(v -> v.getX()).min().getAsDouble();
+        float maxY = (float)g.vertices().mapToDouble(v -> v.getY()).max().getAsDouble();
+        float minY = (float)g.vertices().mapToDouble(v -> v.getY()).min().getAsDouble();
+        return new Shift((maxX + minX)/2, (maxY + minY)/2);
+    }
 }
