@@ -40,6 +40,7 @@ import qdge.gui.actions.ZoomAction;
 import qdge.gui.actions.transformation.CustomAngleRotateAction;
 import qdge.gui.actions.transformation.TransformationAction;
 import qdge.gui.editormode.EditorMode;
+import qdge.gui.undo.HistoryModel;
 import qdge.io.Graph6Handler;
 import qdge.io.LatexWriter;
 import qdge.io.TikzWriter;
@@ -67,13 +68,15 @@ public class QDGraphEditor {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
         
+        final HistoryModel history = new HistoryModel();
+        
         final Graph graph = new Graph();
         final GraphPanel panel = new GraphPanel(graph);
         final SimpleSingleSelectionModel<EditorMode> editorModeModel =
                 new SimpleSingleSelectionModel<>();
-        final EditorMode createMode = EditorMode.createMode(graph, panel);
-        final EditorMode layoutMode = EditorMode.layoutMode(graph, panel);
-        final EditorMode editMode = EditorMode.editMode(graph, panel);
+        final EditorMode createMode = EditorMode.createMode(graph, panel, history);
+        final EditorMode layoutMode = EditorMode.layoutMode(graph, panel, history);
+        final EditorMode editMode = EditorMode.editMode(graph, panel, history);
         final GraphPanelMouseListener l = new GraphPanelMouseListener(createMode, panel);
         editorModeModel.select(createMode);
         graph.addInfoListener(() -> {
@@ -138,24 +141,24 @@ public class QDGraphEditor {
         mEdit.add(mMode);
         
         JMenu mCenter = new JMenu("Center");
-        mCenter.add(new TransformationAction("Center bounding box", new CenterBoundingBox(), graph)).setAccelerator(KeyStroke.getKeyStroke('B'));
-        mCenter.add(new TransformationAction("Center gravitational center", new CenterGravitationalCenter(), graph)).setAccelerator(KeyStroke.getKeyStroke('G'));
+        mCenter.add(new TransformationAction("Center bounding box", new CenterBoundingBox(), graph, history)).setAccelerator(KeyStroke.getKeyStroke('B'));
+        mCenter.add(new TransformationAction("Center gravitational center", new CenterGravitationalCenter(), graph, history)).setAccelerator(KeyStroke.getKeyStroke('G'));
         
         JMenu mTransform = new JMenu("Transform");
-        mTransform.add(new CustomAngleRotateAction("Rotate...", graph));
-        mTransform.add(new TransformationAction("Rotate right", new Rotation(-90), graph)).setAccelerator(KeyStroke.getKeyStroke('r'));
-        mTransform.add(new TransformationAction("Rotate left", new Rotation(90), graph)).setAccelerator(KeyStroke.getKeyStroke('l'));
-        mTransform.add(new TransformationAction("Flip horizontally", new FlipHorizontally(), graph)).setAccelerator(KeyStroke.getKeyStroke('H'));
-        mTransform.add(new TransformationAction("Flip vertically", new FlipVertically(), graph)).setAccelerator(KeyStroke.getKeyStroke('V'));
+        mTransform.add(new CustomAngleRotateAction("Rotate...", graph, history));
+        mTransform.add(new TransformationAction("Rotate right", new Rotation(-90), graph, history)).setAccelerator(KeyStroke.getKeyStroke('r'));
+        mTransform.add(new TransformationAction("Rotate left", new Rotation(90), graph, history)).setAccelerator(KeyStroke.getKeyStroke('l'));
+        mTransform.add(new TransformationAction("Flip horizontally", new FlipHorizontally(), graph, history)).setAccelerator(KeyStroke.getKeyStroke('H'));
+        mTransform.add(new TransformationAction("Flip vertically", new FlipVertically(), graph, history)).setAccelerator(KeyStroke.getKeyStroke('V'));
         mTransform.addSeparator();
         mTransform.add(mCenter);
-        mTransform.add(new TransformationAction("Shift up", new Shift(0, -1), graph)).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0));
-        mTransform.add(new TransformationAction("Shift down", new Shift(0, 1), graph)).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0));
-        mTransform.add(new TransformationAction("Shift right", new Shift(1, 0), graph)).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0));
-        mTransform.add(new TransformationAction("Shift left", new Shift(-1, 0), graph)).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0));
+        mTransform.add(new TransformationAction("Shift up", new Shift(0, -1), graph, history)).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0));
+        mTransform.add(new TransformationAction("Shift down", new Shift(0, 1), graph, history)).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0));
+        mTransform.add(new TransformationAction("Shift right", new Shift(1, 0), graph, history)).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0));
+        mTransform.add(new TransformationAction("Shift left", new Shift(-1, 0), graph, history)).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0));
         mTransform.addSeparator();
-        mTransform.add(new TransformationAction("Scale up", new Scale(2), graph)).setAccelerator(KeyStroke.getKeyStroke('S'));
-        mTransform.add(new TransformationAction("Scale down", new Scale(.5f), graph)).setAccelerator(KeyStroke.getKeyStroke('s'));
+        mTransform.add(new TransformationAction("Scale up", new Scale(2), graph, history)).setAccelerator(KeyStroke.getKeyStroke('S'));
+        mTransform.add(new TransformationAction("Scale down", new Scale(.5f), graph, history)).setAccelerator(KeyStroke.getKeyStroke('s'));
         
         JMenu mZoom = new JMenu("Zoom");
         mZoom.add(new ZoomAction(true, panel)).setAccelerator(KeyStroke.getKeyStroke('+'));
@@ -180,10 +183,10 @@ public class QDGraphEditor {
         panel.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.SHIFT_DOWN_MASK), "upup");
         panel.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.SHIFT_DOWN_MASK), "rightright");
         panel.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.SHIFT_DOWN_MASK), "leftleft");
-        panel.getActionMap().put("downdown", new TransformationAction("Move down", new Shift(0, 10), graph));
-        panel.getActionMap().put("upup", new TransformationAction("Move up", new Shift(0, -10), graph));
-        panel.getActionMap().put("rightright", new TransformationAction("Move right", new Shift(10, 0), graph));
-        panel.getActionMap().put("leftleft", new TransformationAction("Move left", new Shift(-10, 0), graph));
+        panel.getActionMap().put("downdown", new TransformationAction("Move down", new Shift(0, 10), graph, history));
+        panel.getActionMap().put("upup", new TransformationAction("Move up", new Shift(0, -10), graph, history));
+        panel.getActionMap().put("rightright", new TransformationAction("Move right", new Shift(10, 0), graph, history));
+        panel.getActionMap().put("leftleft", new TransformationAction("Move left", new Shift(-10, 0), graph, history));
         
         panel.addMouseWheelListener(e -> {
             if(e.getWheelRotation()<0){

@@ -20,6 +20,8 @@ package qdge.gui.editormode;
 import qdge.data.Graph;
 import qdge.data.Vertex;
 import qdge.gui.GraphPanel;
+import qdge.gui.undo.HistoryModel;
+import qdge.gui.undo.MoveHistoryItem;
 
 /**
  * Editor mode which does not edit the underlying graph
@@ -28,9 +30,13 @@ import qdge.gui.GraphPanel;
 class LayoutMode extends AbstractEditorMode {
     
     private Vertex currentVertex = null;
+    private final HistoryModel history;
+    private float startX;
+    private float startY;
 
-    public LayoutMode(Graph graph, GraphPanel panel) {
+    public LayoutMode(Graph graph, GraphPanel panel, HistoryModel history) {
         super(graph, panel);
+        this.history = history;
     }
 
     @Override
@@ -41,6 +47,10 @@ class LayoutMode extends AbstractEditorMode {
     @Override
     public void dragStarted(float x, float y, int button, ModifierKey key) {
         currentVertex = findNearestVertex(x, y);
+        if(currentVertex!=null){
+            startX = currentVertex.getX();
+            startY = currentVertex.getY();
+        }
     }
 
     @Override
@@ -52,6 +62,12 @@ class LayoutMode extends AbstractEditorMode {
 
     @Override
     public void dragEnded(float x, float y) {
+        if(currentVertex!=null){
+            history.push(new MoveHistoryItem(
+                    currentVertex, 
+                    startX, startY,
+                    currentVertex.getX(), currentVertex.getY()));
+        }
         currentVertex = null;
     }    
 }

@@ -24,6 +24,12 @@ import qdge.data.Edge;
 import qdge.data.Graph;
 import qdge.data.Vertex;
 import qdge.gui.GraphPanel;
+import qdge.gui.undo.EdgeCreationHistoryItem;
+import qdge.gui.undo.EdgeRemovalHistoryItem;
+import qdge.gui.undo.EdgeVertexCreationHistoryItem;
+import qdge.gui.undo.HistoryModel;
+import qdge.gui.undo.MoveHistoryItem;
+import qdge.gui.undo.VertexRemovalHistoryItem;
 
 /**
  * Editor mode which edits the underlying graph: it supports easy addition and
@@ -41,10 +47,16 @@ class EditMode extends AbstractEditorMode {
     private final DragHandler defaultHandler = new DragHandler() {
 
         private Vertex currentVertex;
+        private float startX;
+        private float startY;
         
         @Override
         public void start(float x, float y) {
             currentVertex = findNearestVertex(x, y);
+            if(currentVertex!=null){
+                startX = currentVertex.getX();
+                startY = currentVertex.getY();
+            }
         }
 
         @Override
@@ -56,6 +68,12 @@ class EditMode extends AbstractEditorMode {
 
         @Override
         public void end(float x, float y) {
+            if(currentVertex!=null){
+                history.push(new MoveHistoryItem(
+                        currentVertex, 
+                        startX, startY,
+                        currentVertex.getX(), currentVertex.getY()));
+            }
             currentVertex = null;
         }
     };
@@ -83,17 +101,22 @@ class EditMode extends AbstractEditorMode {
                     Vertex end = findNearestVertex(x, y);
                     if(end == null){
                         end = graph.addNewVertex(x, y);
-                    } else if (end.equals(start)){
-                        return;
+                        Edge e = graph.addNewEdge(start, end);
+                        history.push(new EdgeVertexCreationHistoryItem(end, e, graph));
+                    } else if (!end.equals(start)){
+                        Edge e = graph.addNewEdge(start, end);
+                        history.push(new EdgeCreationHistoryItem(e, graph));
                     }
-                    graph.addNewEdge(start, end);
                 }
             }
         });
     }
+    
+    private final HistoryModel history;
 
-    public EditMode(Graph graph, GraphPanel panel) {
+    public EditMode(Graph graph, GraphPanel panel, HistoryModel history) {
         super(graph, panel);
+        this.history = history;
     }
 
     @Override
@@ -102,8 +125,10 @@ class EditMode extends AbstractEditorMode {
             Vertex v = panel.getFocusVertex();
             Edge e = panel.getFocusEdge();
             if(v!=null){
+                history.push(new VertexRemovalHistoryItem(v, graph));
                 graph.removeVertex(v);
             } else if(e!=null){
+                history.push(new EdgeRemovalHistoryItem(e, graph));
                 graph.removeEdge(e);
             }
         } else if(clickCount > 1){

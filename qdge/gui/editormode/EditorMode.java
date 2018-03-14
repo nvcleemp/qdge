@@ -19,6 +19,7 @@ package qdge.gui.editormode;
 
 import qdge.data.Graph;
 import qdge.gui.GraphPanel;
+import qdge.gui.undo.HistoryModel;
 
 /**
  *
@@ -31,15 +32,15 @@ public interface EditorMode {
     void dragged(float x, float y);
     void dragEnded(float x, float y);
     
-    public static EditorMode layoutMode(Graph g, GraphPanel panel){
-        return new LayoutMode(g, panel);
+    public static EditorMode layoutMode(Graph g, GraphPanel panel, HistoryModel history){
+        return new LayoutMode(g, panel, history);
     }
     
-    public static EditorMode createMode(Graph g, GraphPanel panel){
-        return new CreateMode(g, panel);
+    public static EditorMode createMode(Graph g, GraphPanel panel, HistoryModel history){
+        return new CreateMode(g, panel, history);
     }
     
-    public static EditorMode editMode(Graph g, GraphPanel panel){
-        return new EditMode(g, panel);
+    public static EditorMode editMode(Graph g, GraphPanel panel, HistoryModel history){
+        return new EditMode(g, panel, history);
     }
 }
