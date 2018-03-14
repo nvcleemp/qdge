@@ -65,6 +65,14 @@ public class HistoryModel {
         fireHistoryChanged();
     }
     
+    public void addListener(HistoryListener l){
+        listeners.add(l);
+    }
+    
+    public void removeListener(HistoryListener l){
+        listeners.remove(l);
+    }
+    
     private void fireHistoryChanged(){
         final HistoryItem topHistory = history.isEmpty() ? null : history.peek();
         final HistoryItem topFuture = future.isEmpty() ? null : future.peek();
