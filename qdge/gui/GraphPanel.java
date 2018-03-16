@@ -76,14 +76,6 @@ public class GraphPanel extends JPanel{
         paintComponentImpl(g, getWidth(), getHeight());
     }
     
-    private int getX(Vertex v){
-        return Math.round(v.getX());
-    }
-    
-    private int getY(Vertex v){
-        return Math.round(v.getY());
-    }
-    
     private void paintComponentImpl(Graphics g, int width, int height) {
         final Graphics g2 = g.create();
         g2.translate(width/2, height/2);
@@ -92,14 +84,12 @@ public class GraphPanel extends JPanel{
         }
         ((Graphics2D)g2).scale(5.0/zoom, 5.0/zoom);
         if(halfEdgeStart!=null){
-            paintEdge(g2, getX(halfEdgeStart), getY(halfEdgeStart), Math.round(halfEdgeX), Math.round(halfEdgeY), 1);
+            paintEdge(g2, 
+                    Math.round(halfEdgeStart.getX()), Math.round(halfEdgeStart.getY()),
+                    Math.round(halfEdgeX), Math.round(halfEdgeY), 1);
         }
-        graph.edges().forEach(
-                e -> paintEdge(g2, getX(e.getV()), getY(e.getV()), getX(e.getW()), getY(e.getW()), e.equals(focusEdge) ? 3 : 1)
-        );
-        graph.vertices().forEach(
-                v -> paintVertex(g2, getX(v), getY(v), v.equals(focusVertex) ? Color.ORANGE : Color.WHITE)
-        );
+        graph.edges().forEach(e -> paintEdge(g2, e));
+        graph.vertices().forEach(v -> paintVertex(g2, v));
     }
 
     private void paintGrid(Graphics g, int width, int height){
@@ -113,12 +103,26 @@ public class GraphPanel extends JPanel{
         }
     }
     
+    private void paintVertex(Graphics g, Vertex v){
+        int x = Math.round(v.getX());
+        int y = Math.round(v.getY());
+        paintVertex(g, x, y, v.equals(focusVertex) ? Color.ORANGE : Color.WHITE);
+    }
+    
     private void paintVertex(Graphics g, int x, int y, Color color){
         Graphics2D g2 = (Graphics2D)(g.create());
         g2.setColor(color);
         g2.fillOval(x-VERTEX_RADIUS, y-VERTEX_RADIUS, 2*VERTEX_RADIUS, 2*VERTEX_RADIUS);
         g2.setColor(Color.BLACK);
         g2.drawOval(x-VERTEX_RADIUS, y-VERTEX_RADIUS, 2*VERTEX_RADIUS, 2*VERTEX_RADIUS);
+    }
+    
+    private void paintEdge(Graphics g, Edge e){
+        int x1 = Math.round(e.getV().getX());
+        int y1 = Math.round(e.getV().getY());
+        int x2 = Math.round(e.getW().getX());
+        int y2 = Math.round(e.getW().getY());
+        paintEdge(g, x1, y1, x2, y2, e.equals(focusEdge) ? 3 : 1);
     }
     
     private void paintEdge(Graphics g, int x1, int y1, int x2, int y2, float width){
