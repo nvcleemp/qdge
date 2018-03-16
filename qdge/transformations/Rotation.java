@@ -55,5 +55,10 @@ public class Rotation extends AbstractUniversalGraphTransformation {
     public GraphTransformation inverseTransformation(Graph g) {
         return new Rotation(-angle);
     }
+
+    @Override
+    public GraphTransformation repeatTransformation(Graph g) {
+        return new Rotation(angle);
+    }
     
 }

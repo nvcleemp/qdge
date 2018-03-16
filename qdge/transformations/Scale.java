@@ -46,5 +46,10 @@ public class Scale extends AbstractUniversalGraphTransformation {
     public GraphTransformation inverseTransformation(Graph g) {
         return new Scale(1/scale);
     }
+
+    @Override
+    public GraphTransformation repeatTransformation(Graph g) {
+        return new Scale(scale);
+    }
     
 }

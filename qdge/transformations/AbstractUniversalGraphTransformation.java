@@ -27,6 +27,11 @@ import qdge.data.Vertex;
  * @author nvcleemp
  */
 public abstract class AbstractUniversalGraphTransformation implements GraphTransformation {
+
+    @Override
+    public GraphTransformation repeatTransformation(Graph g) {
+        return this;
+    }
     
     @Override
     public void transformGraph(Graph g){

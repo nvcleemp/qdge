@@ -28,4 +28,6 @@ public interface GraphTransformation {
     void transformGraph(Graph g);
     
     GraphTransformation inverseTransformation(Graph g);
+    
+    GraphTransformation repeatTransformation(Graph g);
 }

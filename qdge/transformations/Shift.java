@@ -43,5 +43,10 @@ public class Shift extends AbstractUniversalGraphTransformation {
     public GraphTransformation inverseTransformation(Graph g) {
         return new Shift(-x, -y);
     }
+
+    @Override
+    public GraphTransformation repeatTransformation(Graph g) {
+        return new Shift(x, y);
+    }
     
 }
