@@ -49,7 +49,8 @@ public class TransformationAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
         GraphTransformation inverse = transformation.inverseTransformation(graph);
         transformation.transformGraph(graph);
-        history.push(new TransformationHistoryItem(graph, name, transformation, inverse));
+        GraphTransformation repeat = transformation.repeatTransformation(graph);
+        history.push(new TransformationHistoryItem(graph, name, repeat, inverse));
     }
     
 }
