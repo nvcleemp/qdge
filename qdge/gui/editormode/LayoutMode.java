@@ -17,7 +17,9 @@
 
 package qdge.gui.editormode;
 
+import qdge.data.Edge;
 import qdge.data.Graph;
+import qdge.data.GraphSelectionModel;
 import qdge.data.Vertex;
 import qdge.gui.GraphPanel;
 import qdge.gui.undo.HistoryModel;
@@ -31,17 +33,27 @@ class LayoutMode extends AbstractEditorMode {
     
     private Vertex currentVertex = null;
     private final HistoryModel history;
+    private final GraphSelectionModel selectionModel;
     private float startX;
     private float startY;
 
-    public LayoutMode(Graph graph, GraphPanel panel, HistoryModel history) {
+    public LayoutMode(Graph graph, GraphPanel panel, HistoryModel history, GraphSelectionModel selectionModel) {
         super(graph, panel);
         this.history = history;
+        this.selectionModel = selectionModel;
     }
 
     @Override
     public void clicked(float x, float y, int button, int clickcount, ModifierKey key) {
-        //TODO: selection
+        if(button > 1){
+            Vertex v = findNearestVertex(x, y);
+            Edge e = findNearestEdge(x, y);
+            if(v!=null){
+                selectionModel.toggleSelected(v);
+            } else if(e!=null){
+                selectionModel.toggleSelected(e);
+            }
+        }
     }
 
     @Override

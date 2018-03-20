@@ -31,6 +31,7 @@ import javax.swing.event.ChangeListener;
 import qdge.data.Edge;
 import qdge.data.GraphListener;
 import qdge.data.Graph;
+import qdge.data.GraphSelectionModel;
 import qdge.data.Vertex;
 
 /**
@@ -42,9 +43,13 @@ public class GraphPanel extends JPanel{
         
     public static final int VERTEX_RADIUS = 5;
     
+    private static final Color SELECTION_COLOR = Color.CYAN.darker();
+    
     private final GraphListener listener = this::repaint;
     
     private Graph graph;
+    
+    private GraphSelectionModel selectionModel;
     
     private Vertex focusVertex = null;
     
@@ -61,12 +66,15 @@ public class GraphPanel extends JPanel{
     private int zoom = 5;
 
     public GraphPanel() {
-        this(new Graph());
+        this(new Graph(), new GraphSelectionModel());
     }
     
-    public GraphPanel(Graph graph) {
+    public GraphPanel(Graph graph, GraphSelectionModel selectionModel) {
         this.graph = graph;
+        this.selectionModel = selectionModel;
         graph.addListener(listener);
+        selectionModel.addVertexSelectionListener((m, i) -> repaint());
+        selectionModel.addEdgeSelectionListener((m, i) -> repaint());
         listeners.add(e -> repaint());
     }
     
@@ -107,7 +115,8 @@ public class GraphPanel extends JPanel{
         int x = Math.round(v.getX());
         int y = Math.round(v.getY());
         Color vertexColor = v.equals(focusVertex) ? Color.ORANGE : Color.WHITE;
-        paintVertex(g, x, y, vertexColor, Color.BLACK);
+        Color edgeColor = selectionModel.isSelected(v) ? SELECTION_COLOR : Color.BLACK;
+        paintVertex(g, x, y, vertexColor, edgeColor);
     }
     
     private void paintVertex(Graphics g, int x, int y, Color color, Color edgeColor){
@@ -123,7 +132,8 @@ public class GraphPanel extends JPanel{
         int y1 = Math.round(e.getV().getY());
         int x2 = Math.round(e.getW().getX());
         int y2 = Math.round(e.getW().getY());
-        paintEdge(g, x1, y1, x2, y2, e.equals(focusEdge) ? 3 : 1, Color.BLACK);
+        Color color = selectionModel.isSelected(e) ? SELECTION_COLOR : Color.BLACK;
+        paintEdge(g, x1, y1, x2, y2, e.equals(focusEdge) ? 3 : 1, color);
     }
     
     private void paintEdge(Graphics g, int x1, int y1, int x2, int y2, float width, Color color){

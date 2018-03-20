@@ -27,6 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
+import qdge.data.GraphSelectionModel;
 import qdge.gui.undo.HistoryModel;
 
 /**
@@ -42,13 +43,16 @@ public class LoadFileAction extends AbstractAction {
     
     private final HistoryModel history;
     
+    private final GraphSelectionModel selectionModel;
+    
     private final JFileChooser fileChooser = new JFileChooser();
     
-    public LoadFileAction(Graph graph, FileGraphReader reader, HistoryModel history) {
+    public LoadFileAction(Graph graph, FileGraphReader reader, HistoryModel history, GraphSelectionModel selectionModel) {
         super("Load " + reader.getFormatName() + " from file...");
         this.reader = reader;
         this.graph = graph;
         this.history = history;
+        this.selectionModel = selectionModel;
     }
 
     @Override
@@ -56,6 +60,7 @@ public class LoadFileAction extends AbstractAction {
         if(fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
             graph.clear();
             history.clear();
+            selectionModel.clear();
             File file = fileChooser.getSelectedFile();
             try {
                 reader.readFromFile(file, graph);

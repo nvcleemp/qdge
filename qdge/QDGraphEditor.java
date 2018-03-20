@@ -30,6 +30,7 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.KeyStroke;
 
 import qdge.data.Graph;
+import qdge.data.GraphSelectionModel;
 import qdge.gui.GraphPanel;
 import qdge.gui.GraphPanelMouseListener;
 import qdge.gui.actions.ExportStringAction;
@@ -70,14 +71,15 @@ public class QDGraphEditor {
         frame.setLayout(new BorderLayout());
         
         final HistoryModel history = new HistoryModel();
+        final GraphSelectionModel selectionModel = new GraphSelectionModel();
         
         final Graph graph = new Graph();
-        final GraphPanel panel = new GraphPanel(graph);
+        final GraphPanel panel = new GraphPanel(graph, selectionModel);
         final SimpleSingleSelectionModel<EditorMode> editorModeModel =
                 new SimpleSingleSelectionModel<>();
-        final EditorMode createMode = EditorMode.createMode(graph, panel, history);
-        final EditorMode layoutMode = EditorMode.layoutMode(graph, panel, history);
-        final EditorMode editMode = EditorMode.editMode(graph, panel, history);
+        final EditorMode createMode = EditorMode.createMode(graph, panel, history, selectionModel);
+        final EditorMode layoutMode = EditorMode.layoutMode(graph, panel, history, selectionModel);
+        final EditorMode editMode = EditorMode.editMode(graph, panel, history, selectionModel);
         final GraphPanelMouseListener l = new GraphPanelMouseListener(createMode, panel);
         editorModeModel.select(createMode);
         graph.addInfoListener(() -> {
@@ -100,6 +102,7 @@ public class QDGraphEditor {
             public void actionPerformed(ActionEvent e) {
                 graph.clear();
                 history.clear();
+                selectionModel.clear();
             }
         });
         JMenu mSave = new JMenu("Save");
@@ -115,10 +118,10 @@ public class QDGraphEditor {
         mFile.add(mExport);
         JMenu mLoad = new JMenu("Load");
         JMenu mLoadFile = new JMenu("Load from file");
-        mLoadFile.add(new LoadFileAction(graph, new WriteGraph2DHandler(), history));
+        mLoadFile.add(new LoadFileAction(graph, new WriteGraph2DHandler(), history, selectionModel));
         mLoad.add(mLoadFile);
         JMenu mLoadString = new JMenu("Load from string");
-        mLoadString.add(new LoadStringAction(graph, new Graph6Handler(), history));
+        mLoadString.add(new LoadStringAction(graph, new Graph6Handler(), history, selectionModel));
         mLoad.add(mLoadString);
         mFile.add(mLoad);
         
@@ -165,6 +168,15 @@ public class QDGraphEditor {
         mEdit.add(undoItem).setAccelerator(KeyStroke.getKeyStroke('Z', InputEvent.CTRL_DOWN_MASK));
         mEdit.add(redoItem).setAccelerator(KeyStroke.getKeyStroke('Y', InputEvent.CTRL_DOWN_MASK));
         
+        JMenu mSelection = new JMenu("Selection");
+        mSelection.add(new AbstractAction("Clear selection") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                selectionModel.clear();
+            }
+        }).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0));
+        
+        
         JMenu mCenter = new JMenu("Center");
         mCenter.add(new TransformationAction("Center bounding box", new CenterBoundingBox(), graph, history)).setAccelerator(KeyStroke.getKeyStroke('B'));
         mCenter.add(new TransformationAction("Center gravitational center", new CenterGravitationalCenter(), graph, history)).setAccelerator(KeyStroke.getKeyStroke('G'));
@@ -201,6 +213,7 @@ public class QDGraphEditor {
         JMenuBar mb = new JMenuBar();
         mb.add(mFile);
         mb.add(mEdit);
+        mb.add(mSelection);
         mb.add(mTransform);
         mb.add(mView);
         

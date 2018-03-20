@@ -19,9 +19,10 @@ package qdge.gui.editormode;
 
 import java.util.EnumMap;
 import java.util.Map;
-import qdge.data.Edge;
 
+import qdge.data.Edge;
 import qdge.data.Graph;
+import qdge.data.GraphSelectionModel;
 import qdge.data.Vertex;
 import qdge.gui.GraphPanel;
 import qdge.gui.undo.EdgeCreationHistoryItem;
@@ -111,15 +112,25 @@ class CreateMode extends AbstractEditorMode {
     }
     
     private final HistoryModel history;
+    private final GraphSelectionModel selectionModel;
 
-    public CreateMode(Graph graph, GraphPanel panel, HistoryModel history) {
+    public CreateMode(Graph graph, GraphPanel panel, HistoryModel history, GraphSelectionModel selectionModel) {
         super(graph, panel);
         this.history = history;
+        this.selectionModel = selectionModel;
     }
 
     @Override
     public void clicked(float x, float y, int button, int clickCount, ModifierKey key) {
-        if(clickCount > 1){
+        if(button > 1){
+            Vertex v = findNearestVertex(x, y);
+            Edge e = findNearestEdge(x, y);
+            if(v!=null){
+                selectionModel.toggleSelected(v);
+            } else if(e!=null){
+                selectionModel.toggleSelected(e);
+            }
+        } else if(clickCount > 1){
             Vertex v = graph.addNewVertex(x, y);
             history.push(new VertexCreationHistoryItem(v, graph));
         }
