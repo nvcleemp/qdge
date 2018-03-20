@@ -31,6 +31,7 @@ import javax.swing.KeyStroke;
 
 import qdge.data.Graph;
 import qdge.data.GraphSelectionModel;
+import qdge.data.Vertex;
 import qdge.gui.GraphPanel;
 import qdge.gui.GraphPanelMouseListener;
 import qdge.gui.actions.ExportStringAction;
@@ -40,13 +41,17 @@ import qdge.gui.actions.LoadStringAction;
 import qdge.gui.actions.SaveFileAction;
 import qdge.gui.actions.ZoomAction;
 import qdge.gui.actions.transformation.CustomAngleRotateAction;
+import qdge.gui.actions.transformation.TransformationWithReferenceVertexAction;
 import qdge.gui.actions.transformation.TransformationAction;
+import qdge.gui.dialogs.ReferenceVertexSelectionDialog;
 import qdge.gui.editormode.EditorMode;
 import qdge.gui.undo.HistoryModel;
 import qdge.io.Graph6Handler;
 import qdge.io.LatexWriter;
 import qdge.io.TikzWriter;
 import qdge.io.WriteGraph2DHandler;
+import qdge.transformations.AlignXCoordinates;
+import qdge.transformations.AlignYCoordinates;
 import qdge.transformations.CenterBoundingBox;
 import qdge.transformations.CenterGravitationalCenter;
 import qdge.transformations.FlipVertically;
@@ -196,6 +201,60 @@ public class QDGraphEditor {
         mTransform.addSeparator();
         mTransform.add(new TransformationAction("Scale up", new Scale(2), graph, history)).setAccelerator(KeyStroke.getKeyStroke('S'));
         mTransform.add(new TransformationAction("Scale down", new Scale(.5f), graph, history)).setAccelerator(KeyStroke.getKeyStroke('s'));
+        mTransform.addSeparator();
+        mTransform.add(new TransformationWithReferenceVertexAction("Align X coordinates", new AlignXCoordinates(selectionModel), graph, history, selectionModel, 
+                ReferenceVertexSelectionDialog.FIRST_SELECTED,
+                ReferenceVertexSelectionDialog.LAST_SELECTED,
+                new ReferenceVertexSelectionDialog.ReferenceVertexSelectionItem(
+                        "Leftmost vertex", 
+                        (g,sm) -> sm.getOrderedSelectedVerticesStream()
+                                .parallel()
+                                .reduce((u,v) -> u.getX() < v.getX() ? u : v)
+                                .orElse(null)
+                ),
+                new ReferenceVertexSelectionDialog.ReferenceVertexSelectionItem(
+                        "Rightmost vertex", 
+                        (g,sm) -> sm.getOrderedSelectedVerticesStream()
+                                .parallel()
+                                .reduce((u,v) -> u.getX() > v.getX() ? u : v)
+                                .orElse(null)
+                ),
+                new ReferenceVertexSelectionDialog.ReferenceVertexSelectionItem(
+                        "Average", 
+                        (g,sm) -> new Vertex( 
+                                (float) sm.getOrderedSelectedVerticesStream()
+                                        .parallel()
+                                        .mapToDouble(Vertex::getX)
+                                        .average().getAsDouble(),
+                        0)
+                )
+        ));
+        mTransform.add(new TransformationWithReferenceVertexAction("Align Y coordinates", new AlignYCoordinates(selectionModel), graph, history, selectionModel, 
+                ReferenceVertexSelectionDialog.FIRST_SELECTED,
+                ReferenceVertexSelectionDialog.LAST_SELECTED,
+                new ReferenceVertexSelectionDialog.ReferenceVertexSelectionItem(
+                        "Highest vertex", 
+                        (g,sm) -> sm.getOrderedSelectedVerticesStream()
+                                .parallel()
+                                .reduce((u,v) -> u.getY() < v.getY() ? u : v)
+                                .orElse(null)
+                ),
+                new ReferenceVertexSelectionDialog.ReferenceVertexSelectionItem(
+                        "Lowest vertex", 
+                        (g,sm) -> sm.getOrderedSelectedVerticesStream()
+                                .parallel()
+                                .reduce((u,v) -> u.getY() > v.getY() ? u : v)
+                                .orElse(null)
+                ),
+                new ReferenceVertexSelectionDialog.ReferenceVertexSelectionItem(
+                        "Average", 
+                        (g,sm) -> new Vertex(0, 
+                                (float) sm.getOrderedSelectedVerticesStream()
+                                        .parallel()
+                                        .mapToDouble(Vertex::getY)
+                                        .average().getAsDouble())
+                )
+        ));
         
         JMenu mZoom = new JMenu("Zoom");
         mZoom.add(new ZoomAction(true, panel)).setAccelerator(KeyStroke.getKeyStroke('+'));
