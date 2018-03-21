@@ -43,6 +43,7 @@ import qdge.gui.actions.ZoomAction;
 import qdge.gui.actions.transformation.CustomAngleRotateAction;
 import qdge.gui.actions.transformation.TransformationWithReferenceVertexAction;
 import qdge.gui.actions.transformation.TransformationAction;
+import qdge.gui.actions.transformation.VertexSelectionTransformationAction;
 import qdge.gui.dialogs.ReferenceVertexSelectionDialog;
 import qdge.gui.editormode.EditorMode;
 import qdge.gui.undo.HistoryModel;
@@ -54,6 +55,8 @@ import qdge.transformations.AlignXCoordinates;
 import qdge.transformations.AlignYCoordinates;
 import qdge.transformations.CenterBoundingBox;
 import qdge.transformations.CenterGravitationalCenter;
+import qdge.transformations.DistributeHorizontally;
+import qdge.transformations.DistributeVertically;
 import qdge.transformations.FlipVertically;
 import qdge.transformations.Rotation;
 import qdge.transformations.Scale;
@@ -255,6 +258,8 @@ public class QDGraphEditor {
                                         .average().getAsDouble())
                 )
         ));
+        mTransform.add(new VertexSelectionTransformationAction("Distribute horizontally", new DistributeHorizontally(selectionModel), graph, history, selectionModel));
+        mTransform.add(new VertexSelectionTransformationAction("Distribute vertically", new DistributeVertically(selectionModel), graph, history, selectionModel));
         
         JMenu mZoom = new JMenu("Zoom");
         mZoom.add(new ZoomAction(true, panel)).setAccelerator(KeyStroke.getKeyStroke('+'));
