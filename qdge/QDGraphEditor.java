@@ -183,7 +183,31 @@ public class QDGraphEditor {
                 selectionModel.clear();
             }
         }).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0));
-        
+        mSelection.add(new AbstractAction("Select all vertices") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                selectionModel.selectAllVertices(graph);
+            }
+        }).setAccelerator(KeyStroke.getKeyStroke('A', InputEvent.CTRL_DOWN_MASK));
+        mSelection.add(new AbstractAction("Select all edges") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                selectionModel.selectAllEdges(graph);
+            }
+        }).setAccelerator(KeyStroke.getKeyStroke('E', InputEvent.CTRL_DOWN_MASK));
+        mSelection.add(new AbstractAction("Invert vertex selection") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                selectionModel.invertVertexSelection(graph);
+            }
+        }).setAccelerator(KeyStroke.getKeyStroke('!'));
+        mSelection.add(new AbstractAction("Invert edge selection") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                selectionModel.invertEdgeSelection(graph);
+            }
+        }).setAccelerator(KeyStroke.getKeyStroke('|'));
+
         
         JMenu mCenter = new JMenu("Center");
         mCenter.add(new TransformationAction("Center bounding box", new CenterBoundingBox(), graph, history)).setAccelerator(KeyStroke.getKeyStroke('B'));

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
@@ -142,6 +143,44 @@ public class GraphSelectionModel {
     
     public Stream<Edge> getOrderedSelectedEdgesStream(){
         return selectedEdgesOrder.stream();
+    }
+    
+    public void selectAllVertices(Graph g){
+        g.vertices().filter(v -> !selectedVertices.contains(v)).forEach(v -> {
+            selectedVertices.add(v);
+            selectedVerticesOrder.add(v);
+        });
+        fireVertexSelectionChanged();
+    }
+    
+    public void selectAllEdges(Graph g){
+        g.edges().filter(e -> !selectedEdges.contains(e)).forEach(e -> {
+            selectedEdges.add(e);
+            selectedEdgesOrder.add(e);
+        });
+        fireEdgeSelectionChanged();
+    }
+    
+    public void invertVertexSelection(Graph g){
+        Set<Vertex> oldSelection = new HashSet<>(selectedVertices);
+        selectedVerticesOrder.clear();
+        selectedVertices.clear();
+        g.vertices().filter(v -> !oldSelection.contains(v)).forEach(v -> {
+            selectedVertices.add(v);
+            selectedVerticesOrder.add(v);
+        });
+        fireVertexSelectionChanged();
+    }
+    
+    public void invertEdgeSelection(Graph g){
+        Set<Edge> oldSelection = new HashSet<>(selectedEdges);
+        selectedEdgesOrder.clear();
+        selectedEdges.clear();
+        g.edges().filter(e -> !oldSelection.contains(e)).forEach(e -> {
+            selectedEdges.add(e);
+            selectedEdgesOrder.add(e);
+        });
+        fireEdgeSelectionChanged();
     }
     
     public void addVertexSelectionListener(VertexSelectionListener l){
