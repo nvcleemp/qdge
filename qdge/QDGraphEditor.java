@@ -255,7 +255,7 @@ public class QDGraphEditor {
                                         .average().getAsDouble(),
                         0)
                 )
-        ));
+        )).setAccelerator(KeyStroke.getKeyStroke('x'));
         mTransform.add(new TransformationWithReferenceVertexAction("Align Y coordinates", new AlignYCoordinates(selectionModel), graph, history, selectionModel, 
                 ReferenceVertexSelectionDialog.FIRST_SELECTED,
                 ReferenceVertexSelectionDialog.LAST_SELECTED,
@@ -281,9 +281,11 @@ public class QDGraphEditor {
                                         .mapToDouble(Vertex::getY)
                                         .average().getAsDouble())
                 )
-        ));
-        mTransform.add(new VertexSelectionTransformationAction("Distribute horizontally", new DistributeHorizontally(selectionModel), graph, history, selectionModel));
-        mTransform.add(new VertexSelectionTransformationAction("Distribute vertically", new DistributeVertically(selectionModel), graph, history, selectionModel));
+        )).setAccelerator(KeyStroke.getKeyStroke('y'));
+        mTransform.add(new VertexSelectionTransformationAction("Distribute horizontally", new DistributeHorizontally(selectionModel), graph, history, selectionModel))
+                .setAccelerator(KeyStroke.getKeyStroke('h'));
+        mTransform.add(new VertexSelectionTransformationAction("Distribute vertically", new DistributeVertically(selectionModel), graph, history, selectionModel))
+                .setAccelerator(KeyStroke.getKeyStroke('v'));
         
         JMenu mZoom = new JMenu("Zoom");
         mZoom.add(new ZoomAction(true, panel)).setAccelerator(KeyStroke.getKeyStroke('+'));
