@@ -62,6 +62,7 @@ import qdge.transformations.Rotation;
 import qdge.transformations.Scale;
 import qdge.transformations.Shift;
 import qdge.transformations.FlipHorizontally;
+import qdge.transformations.SelectionShift;
 import qdge.util.SimpleSingleSelectionModel;
 
 /**
@@ -225,6 +226,10 @@ public class QDGraphEditor {
         mTransform.add(new TransformationAction("Shift down", new Shift(0, 1), graph, history)).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0));
         mTransform.add(new TransformationAction("Shift right", new Shift(1, 0), graph, history)).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0));
         mTransform.add(new TransformationAction("Shift left", new Shift(-1, 0), graph, history)).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0));
+        mTransform.add(new VertexSelectionTransformationAction("Shift selection up", new SelectionShift(selectionModel, 0, -1), graph, history, selectionModel)).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_DOWN_MASK));
+        mTransform.add(new VertexSelectionTransformationAction("Shift selection down", new SelectionShift(selectionModel, 0, 1), graph, history, selectionModel)).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_DOWN_MASK));
+        mTransform.add(new VertexSelectionTransformationAction("Shift selection left", new SelectionShift(selectionModel, -1, 0), graph, history, selectionModel)).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.CTRL_DOWN_MASK));
+        mTransform.add(new VertexSelectionTransformationAction("Shift selection right", new SelectionShift(selectionModel, 1, 0), graph, history, selectionModel)).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.CTRL_DOWN_MASK));
         mTransform.addSeparator();
         mTransform.add(new TransformationAction("Scale up", new Scale(2), graph, history)).setAccelerator(KeyStroke.getKeyStroke('S'));
         mTransform.add(new TransformationAction("Scale down", new Scale(.5f), graph, history)).setAccelerator(KeyStroke.getKeyStroke('s'));
@@ -311,10 +316,18 @@ public class QDGraphEditor {
         panel.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.SHIFT_DOWN_MASK), "upup");
         panel.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.SHIFT_DOWN_MASK), "rightright");
         panel.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.SHIFT_DOWN_MASK), "leftleft");
+        panel.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK), "seldowndown");
+        panel.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK), "selupup");
+        panel.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK), "selrightright");
+        panel.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK), "selleftleft");
         panel.getActionMap().put("downdown", new TransformationAction("Move down", new Shift(0, 10), graph, history));
         panel.getActionMap().put("upup", new TransformationAction("Move up", new Shift(0, -10), graph, history));
         panel.getActionMap().put("rightright", new TransformationAction("Move right", new Shift(10, 0), graph, history));
         panel.getActionMap().put("leftleft", new TransformationAction("Move left", new Shift(-10, 0), graph, history));
+        panel.getActionMap().put("seldowndown", new VertexSelectionTransformationAction("Shift selection down", new SelectionShift(selectionModel, 0, 10), graph, history, selectionModel));
+        panel.getActionMap().put("selupup", new VertexSelectionTransformationAction("Shift selection up", new SelectionShift(selectionModel, 0, -10), graph, history, selectionModel));
+        panel.getActionMap().put("selrightright", new VertexSelectionTransformationAction("Shift selection right", new SelectionShift(selectionModel, 10, 0), graph, history, selectionModel));
+        panel.getActionMap().put("selleftleft", new VertexSelectionTransformationAction("Shift selection right", new SelectionShift(selectionModel, -10, 0), graph, history, selectionModel));
         
         panel.addMouseWheelListener(e -> {
             if(e.getWheelRotation()<0){
