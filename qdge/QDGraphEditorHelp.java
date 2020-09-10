@@ -22,6 +22,13 @@ package qdge;
  * @author nvcleemp
  */
 class QDGraphEditorHelp {
+    static final String HELP = "<html><body>"
+            + "<h1>Help</h1>"
+            + "The behaviour of the editor is determined by the editor mode.<br>"
+            + "This mode can be set through the edit menu.<br>Information of how"
+            + " each mode works is also available from that menu."
+            + "<br><br></body></html>";
+    
     static final String EDITOR_MODES = "<html><body>"
             + "<h1>Editor modes</h1>"
             + "<h2>Common actions</h2>"

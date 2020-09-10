@@ -305,12 +305,16 @@ public class QDGraphEditor {
         }).setAccelerator(KeyStroke.getKeyStroke('g'));
         mView.add(mZoom);
         
+        JMenu mHelp = new JMenu("Help");
+        mHelp.add(new InfoAction("Help", QDGraphEditorHelp.HELP)).setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+        
         JMenuBar mb = new JMenuBar();
         mb.add(mFile);
         mb.add(mEdit);
         mb.add(mSelection);
         mb.add(mTransform);
         mb.add(mView);
+        mb.add(mHelp);
         
         panel.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.SHIFT_DOWN_MASK), "downdown");
         panel.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.SHIFT_DOWN_MASK), "upup");
